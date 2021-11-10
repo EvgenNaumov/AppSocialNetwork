@@ -1,5 +1,8 @@
 package com.example.appsocialnetwork.ui;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +17,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appsocialnetwork.CardActivity;
 import com.example.appsocialnetwork.R;
+import com.example.appsocialnetwork.data.CardData;
 import com.example.appsocialnetwork.data.CardsSource;
 import com.example.appsocialnetwork.data.CardsSourceImpl;
 
@@ -22,6 +27,12 @@ public class SocialNetworkFragment extends Fragment {
     public static SocialNetworkFragment newInstance() {
         return new SocialNetworkFragment();
     }
+
+    public interface onStartIntentListener{
+        public void startIntentEvent(String nameData);
+    }
+
+    onStartIntentListener startIntentListener;
 
     @Nullable
     @Override
@@ -32,6 +43,16 @@ public class SocialNetworkFragment extends Fragment {
         CardsSource data = new CardsSourceImpl(getResources()).init();
         initRecycleView(recyclerView,data);
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            startIntentListener = (onStartIntentListener) getActivity();
+        }catch (ClassCastException e){
+            throw new ClassCastException(context.toString() + " must implement onStartIntentListener");
+        }
     }
 
     private void initRecycleView(RecyclerView recyclerView, CardsSource data) {
@@ -53,6 +74,8 @@ public class SocialNetworkFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(getContext(),String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
+                startIntentListener.startIntentEvent("CardActivity");
+
             }
         });
     }

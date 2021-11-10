@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -85,6 +86,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
                 @Override
                 public void onClick(View view) {
                     if (itemClickListener!=null){
+
                         itemClickListener.onItemClick(view,getAdapterPosition());
                     }
                 }

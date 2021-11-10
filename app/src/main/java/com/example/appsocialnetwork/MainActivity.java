@@ -5,13 +5,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.appsocialnetwork.ui.SocialNetworkAdapter;
 import com.example.appsocialnetwork.ui.SocialNetworkFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SocialNetworkFragment.onStartIntentListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,5 +33,12 @@ public class MainActivity extends AppCompatActivity {
     private void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void startIntentEvent(String cardData) {
+        Intent intent = new Intent(this, new CardActivity().getClass());
+        intent.putExtra("textview1", "значение 1");
+        startActivity(intent);
     }
 }
