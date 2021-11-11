@@ -29,7 +29,7 @@ public class SocialNetworkFragment extends Fragment {
     }
 
     public interface onStartIntentListener{
-        public void startIntentEvent(String nameData);
+        public void startIntentEvent(String nameData,  CardData cardData);
     }
 
     onStartIntentListener startIntentListener;
@@ -55,7 +55,7 @@ public class SocialNetworkFragment extends Fragment {
         }
     }
 
-    private void initRecycleView(RecyclerView recyclerView, CardsSource data) {
+    private void initRecycleView(RecyclerView recyclerView, final CardsSource data) {
         // Эта установка служит для повышения производительности системы
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -74,7 +74,8 @@ public class SocialNetworkFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(getContext(),String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
-                startIntentListener.startIntentEvent("CardActivity");
+                final CardData currentCardData = data.getCardData(position);
+                startIntentListener.startIntentEvent("CardActivity",  currentCardData);
 
             }
         });

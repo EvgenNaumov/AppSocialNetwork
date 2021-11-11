@@ -5,25 +5,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class CardActivity extends AppCompatActivity {
+import com.example.appsocialnetwork.card.InitView;
+import com.example.appsocialnetwork.data.CardData;
 
-    private TextView textView1;
+public class CardActivity extends AppCompatActivity implements InitView {
+
+    private TextView textTitle ;
+    private TextView textDescrip;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card);
 
-        textView1 = findViewById(R.id.textView2);
-        initView();
+        textTitle = findViewById(R.id.textView2);
+        textDescrip = findViewById(R.id.textView4);
+        InitView();
     }
 
-    private void initView() {
+    @Override
+    public void InitView() {
         Bundle arguments = getIntent().getExtras();
+        CardData currData = getIntent().getParcelableExtra("cardData");
         if (arguments!=null){
-            String textview1 = arguments.getString("textview1");
-            textView1.setText(textview1);
+//            String textview1 = arguments.getString("textview1");
+            textTitle.setText(currData.getTitle().toString());
+            textDescrip.setText(currData.getDescription().toString());
         }
     }
+
 
 
 }
