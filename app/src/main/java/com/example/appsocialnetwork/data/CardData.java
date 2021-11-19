@@ -8,12 +8,15 @@ public class CardData implements Parcelable {
     private String description; // описание
     private int picture; // изображение
     private boolean like; // флажок
+    private String editText; //редактируемый текст
 
-    public CardData(String title, String description, int picture, boolean like) {
+    public CardData(String title, String description, int picture, boolean like, String editText) {
         this.title = title;
         this.description = description;
         this.picture = picture;
         this.like = like;
+        this.editText = editText;
+
     }
 
     protected CardData(Parcel in) {

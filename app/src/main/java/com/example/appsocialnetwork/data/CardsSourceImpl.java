@@ -24,7 +24,7 @@ public class CardsSourceImpl implements CardsSource {
 
         int[] pictures = getImageArray();
         for (int i = 0; i < descriptions.length; i++) {
-            dataSource.add(new CardData(titles[i], descriptions[i], pictures[i],false));
+            dataSource.add(new CardData(titles[i], descriptions[i], pictures[i],false, ""));
         }
         return this;
     }

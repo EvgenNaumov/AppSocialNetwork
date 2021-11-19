@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements SocialNetworkFrag
     @Override
     public void startIntentEvent(String cardData, CardData currCardData) {
         Intent intent = new Intent(this, new CardActivity().getClass());
-//        intent.putExtra("title", view.findViewById(R.id.title).toString());
-//        intent.putExtra("description", view.findViewById(R.id.description).toString());
         intent.putExtra("cardData",currCardData);
         startActivity(intent);
     }
