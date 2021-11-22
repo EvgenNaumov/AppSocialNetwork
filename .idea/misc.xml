@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/activity_card.xml" value="0.25" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/drawable/ic_launcher_background.xml" value="0.26510416666666664" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.26510416666666664" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/activity_card.xml" value="0.1" />
         <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/fragment_card.xml" value="0.36231884057971014" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/menu/cards_menu.xml" value="0.24895833333333334" />
       </map>
     </option>
   </component>

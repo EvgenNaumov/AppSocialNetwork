@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appsocialnetwork.R;
@@ -21,13 +22,18 @@ import javax.sql.DataSource;
 
 public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdapter.ViewHolder> {
     private final static String TAG = "SocialNetworkAdapter";
-    private CardsSource dataSource;
+    private final CardsSource dataSource;
     private OnItemClickListener itemClickListener;
+    private  Fragment fragment;
+    private  int menuPosition;
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public SocialNetworkAdapter(CardsSource dataSource) {
+    public SocialNetworkAdapter(CardsSource dataSource, Fragment fragment) {
         this.dataSource = dataSource;
+        //Фрагмент передаётся для вызова метода registerForContextMenu(). Повесим контекстное меню на
+        //весь макет CardView.
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -49,6 +55,10 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
         //holder.getTextView().setText(CardsSource dataSource);
         holder.setData(dataSource.getCardData(position));
         Log.d(TAG,"onBindViewHolder");
+    }
+
+    public int getMenuPosition(){
+        return menuPosition;
     }
 
     @Override
@@ -74,7 +84,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
         private AppCompatImageView image;
         private CheckBox like;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
 //            textView = (TextView) itemView;
             title = itemView.findViewById(R.id.title);
@@ -82,6 +92,8 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
             image = itemView.findViewById(R.id.ImageView);
             like = itemView.findViewById(R.id.like);
 
+            registerContextMenu(itemView);
+            
             image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -91,10 +103,31 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
                     }
                 }
             });
+
+            image.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    menuPosition = getLayoutPosition();
+                   itemView.showContextMenu(10,10);
+                   return true;
+                }
+            });
         }
-        //        public TextView getTextView() {
-        //            return textView;
-        //        }.
+
+        //вешаем контекстное меню
+        private void registerContextMenu(View itemView) {
+            if (fragment!=null){
+                itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        menuPosition = getLayoutPosition();
+                        return false;
+                    }
+                });
+                fragment.registerForContextMenu(itemView);
+            }
+        }
+
         public void setData(CardData cardData){
             title.setText(cardData.getTitle());
             description.setText(cardData.getDescription());
@@ -102,6 +135,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
             image.setImageResource(cardData.getPicture());
         }
     }
+
 
 
 }
