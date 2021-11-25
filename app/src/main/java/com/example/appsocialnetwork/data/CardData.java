@@ -23,6 +23,10 @@ public class CardData implements Parcelable {
 
     }
 
+    public String getEditText() {
+        return editText;
+    }
+
     protected CardData(Parcel in) {
         title = in.readString();
         description = in.readString();

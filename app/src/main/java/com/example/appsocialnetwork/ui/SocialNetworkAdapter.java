@@ -1,5 +1,6 @@
 package com.example.appsocialnetwork.ui;
 
+import android.icu.text.UFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.appsocialnetwork.R;
 import com.example.appsocialnetwork.data.CardData;
 import com.example.appsocialnetwork.data.CardsSource;
+
+import java.text.SimpleDateFormat;
 
 import javax.sql.DataSource;
 
@@ -83,6 +86,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
         private TextView description;
         private AppCompatImageView image;
         private CheckBox like;
+        private TextView date;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -91,6 +95,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
             description = itemView.findViewById(R.id.description);
             image = itemView.findViewById(R.id.ImageView);
             like = itemView.findViewById(R.id.like);
+            date = itemView.findViewById(R.id.date);
 
             registerContextMenu(itemView);
             
@@ -133,6 +138,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
             description.setText(cardData.getDescription());
             like.setChecked(cardData.isLike());
             image.setImageResource(cardData.getPicture());
+            date.setText(new SimpleDateFormat("dd-MM-yy").format(cardData.getDate()));
         }
     }
 
