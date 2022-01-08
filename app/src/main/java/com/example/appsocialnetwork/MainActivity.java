@@ -15,30 +15,36 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.appsocialnetwork.data.CardData;
 import com.example.appsocialnetwork.data.CardsSource;
 import com.example.appsocialnetwork.data.CardsSourceImpl;
+import com.example.appsocialnetwork.observe.Publisher;
 import com.example.appsocialnetwork.ui.SocialNetworkAdapter;
 import com.example.appsocialnetwork.ui.SocialNetworkFragment;
 
 public class MainActivity extends AppCompatActivity implements SocialNetworkFragment.onStartIntentListener{
 
+    private Navigation navigation = new Navigation(getSupportFragmentManager());
+    private Publisher publisher = new Publisher();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initToolbar();
-        addFragment(SocialNetworkFragment.newInstance());
+//        addFragment(SocialNetworkFragment.newInstance());
+        getNavigation().addFragment(SocialNetworkFragment.newInstance(),false);
     }
 
-    private void addFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container,fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
+//    private void addFragment(Fragment fragment) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.fragment_container,fragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+//    }
 
     private void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override
@@ -47,4 +53,13 @@ public class MainActivity extends AppCompatActivity implements SocialNetworkFrag
         intent.putExtra("cardData",currCardData);
         startActivity(intent);
     }
+
+    public Publisher getPublisher() {
+        return publisher;
+    }
+
+    public Navigation getNavigation(){
+        return navigation;
+    }
+
 }

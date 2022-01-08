@@ -24,10 +24,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appsocialnetwork.CardActivity;
+import com.example.appsocialnetwork.FragmentEditCard;
+import com.example.appsocialnetwork.MainActivity;
+import com.example.appsocialnetwork.Navigation;
 import com.example.appsocialnetwork.R;
 import com.example.appsocialnetwork.data.CardData;
 import com.example.appsocialnetwork.data.CardsSource;
 import com.example.appsocialnetwork.data.CardsSourceImpl;
+import com.example.appsocialnetwork.observe.Observer;
+import com.example.appsocialnetwork.observe.Publisher;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 
 public class SocialNetworkFragment extends Fragment {
     private CardsSource data;
@@ -35,22 +46,28 @@ public class SocialNetworkFragment extends Fragment {
     private SocialNetworkAdapter adapter;
     onStartIntentListener startIntentListener;
     private static final int MY_DEFAULT_DURATION = 1000;
+    private Navigation navigation;
+    private Publisher publisher;
+    private boolean moveToLastPosition;
 
     public static SocialNetworkFragment newInstance() {
         return new SocialNetworkFragment();
     }
 
-    public interface onStartIntentListener{
+    public interface onStartIntentListener {
         void startIntentEvent(String nameData, CardData cardData);
     }
 
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        data = new CardsSourceImpl(getResources()).init();
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment__list, container, false);
-
         initView(view);
         setHasOptionsMenu(true);
         return view;
@@ -58,18 +75,28 @@ public class SocialNetworkFragment extends Fragment {
 
     private void initView(View view) {
         recyclerView = view.findViewById(R.id.recycler_view_lines);
-        data = new CardsSourceImpl(getResources()).init();
         initRecycleView();
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        MainActivity activity = (MainActivity) context;
+        navigation = activity.getNavigation();
+        publisher = activity.getPublisher();
+
         try {
             startIntentListener = (onStartIntentListener) getActivity();
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement onStartIntentListener");
         }
+    }
+
+    @Override
+    public void onDetach() {
+        navigation = null;
+        publisher = null;
+        super.onDetach();
     }
 
     @Override
@@ -79,14 +106,25 @@ public class SocialNetworkFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_add:
-                data.addCardData(new CardData("Заголовок " + data.size(),
-                        "Описание ",
-                        R.drawable.ic_launcher_newcard,
-                        false,"Новая заметка" ));
-                adapter.notifyItemInserted(data.size()-1);
-                recyclerView.smoothScrollToPosition(data.size()-1);
+//                data.addCardData(new CardData("Заголовок " + data.size(),
+//                        "Описание ",
+//                        R.drawable.ic_launcher_newcard,
+//                        false, "Новая заметка"));
+//                adapter.notifyItemInserted(data.size() - 1);
+//                recyclerView.smoothScrollToPosition(data.size() - 1);
+                navigation.addFragment(CardFragment.newInstance(), true);
+                publisher.subscibe(new Observer() {
+                    @Override
+                    public void updateCardData(CardData cardData) {
+                        data.addCardData(cardData);
+                        adapter.notifyItemInserted(data.size() - 1);
+                        // это сигнал, чтобы вызванный метод onCreateView
+                        // перепрыгнул на конец списка
+                        moveToLastPosition = true;
+                    }
+                });
                 return true;
             case R.id.action_clear:
                 data.clearCardData();
@@ -103,26 +141,32 @@ public class SocialNetworkFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // Установим адаптер
-        adapter = new SocialNetworkAdapter(data,this);
+        adapter = new SocialNetworkAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
         // Добавим разделитель карточек
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
-        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator,null));
+        itemDecoration.setDrawable(getResources().getDrawable(R.drawable.separator, null));
         recyclerView.addItemDecoration(itemDecoration);
 
-        DefaultItemAnimator animator = new DefaultItemAnimator();
-        animator.setAddDuration(MY_DEFAULT_DURATION);
-        animator.setRemoveDuration(MY_DEFAULT_DURATION);
-        recyclerView.setItemAnimator(animator);
+//        DefaultItemAnimator animator = new DefaultItemAnimator();
+//        animator.setAddDuration(MY_DEFAULT_DURATION);
+//        animator.setRemoveDuration(MY_DEFAULT_DURATION);
+        //загруженная библиотека с гита 'jp.wasabeef:recyclerview-animators:4.0.2'
+        recyclerView.setItemAnimator(new SlideInLeftAnimator());
+
+        if (moveToLastPosition) {
+            recyclerView.smoothScrollToPosition(data.size() - 1);
+            moveToLastPosition = false;
+        }
 
         adapter.setItemClickListener(new SocialNetworkAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(getContext(),String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
                 final CardData currentCardData = data.getCardData(position);
-                startIntentListener.startIntentEvent("CardActivity",  currentCardData);
-
+//                startIntentListener.startIntentEvent("CardActivity", currentCardData);
+                navigation.addFragment(FragmentEditCard.newInstance(currentCardData),true);
             }
         });
     }
@@ -136,11 +180,26 @@ public class SocialNetworkFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int position = adapter.getMenuPosition();
-        switch (item.getItemId()){
+        final int position = adapter.getMenuPosition();
+        switch (item.getItemId()) {
             case R.id.action_update:
-                data.updateCardData(position, new CardData("Кадр " + position, data.getCardData(position).getDescription(), data.getCardData(position).getPicture(),false,""));
+                data.updateCardData(position, new CardData("Кадр " + position,
+                        data.getCardData(position).getDescription(),
+                        data.getCardData(position).getPicture(),
+                        false,
+                        data.getCardData(position).getEditText(),
+                        Calendar.getInstance().getTime()
+                ));
                 adapter.notifyItemChanged(position);
+
+                navigation.addFragment(CardFragment.newInstance(data.getCardData(position)),true);
+                publisher.subscibe(new Observer() {
+                    @Override
+                    public void updateCardData(CardData cardData) {
+                        data.updateCardData(position,cardData);
+                        adapter.notifyItemChanged(position);
+                    }
+                });
                 return true;
             case R.id.action_delete:
                 data.deleteCardData(position);
