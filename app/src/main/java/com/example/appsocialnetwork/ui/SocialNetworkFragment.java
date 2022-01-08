@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appsocialnetwork.CardActivity;
+import com.example.appsocialnetwork.FragmentEditCard;
 import com.example.appsocialnetwork.MainActivity;
 import com.example.appsocialnetwork.Navigation;
 import com.example.appsocialnetwork.R;
@@ -162,10 +163,10 @@ public class SocialNetworkFragment extends Fragment {
         adapter.setItemClickListener(new SocialNetworkAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(getContext(), String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), String.format("Позиция - %d", position), Toast.LENGTH_SHORT).show();
                 final CardData currentCardData = data.getCardData(position);
-                startIntentListener.startIntentEvent("CardActivity", currentCardData);
-
+//                startIntentListener.startIntentEvent("CardActivity", currentCardData);
+                navigation.addFragment(FragmentEditCard.newInstance(currentCardData),true);
             }
         });
     }

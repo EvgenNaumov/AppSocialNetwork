@@ -105,7 +105,7 @@ public class CardFragment extends Fragment {
     private CardData collectCardData() {
         String title = this.title.getText().toString();
         String description = this.description.getText().toString();
-        String editText = this.editText.getText().toString();
+        String editText = this.editText.getText()!=null? this.editText.getText().toString():"";
 
         Date date = getDateFromDatePicker();
         int picture;

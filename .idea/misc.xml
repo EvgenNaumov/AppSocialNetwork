@@ -5,8 +5,11 @@
       <map>
         <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/drawable/ic_launcher_background.xml" value="0.26510416666666664" />
         <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.26510416666666664" />
-        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/activity_card.xml" value="0.1" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/activity_card.xml" value="0.25" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/card_date.xml" value="0.36666666666666664" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/fragment__add_card.xml" value="0.36666666666666664" />
         <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/fragment_card.xml" value="0.36231884057971014" />
+        <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/fragment_editcard.xml" value="0.1" />
         <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/layout/item.xml" value="0.33" />
         <entry key="..\:/GeekBrains/Android/AppSocialNetwork/app/src/main/res/menu/cards_menu.xml" value="0.24895833333333334" />
       </map>

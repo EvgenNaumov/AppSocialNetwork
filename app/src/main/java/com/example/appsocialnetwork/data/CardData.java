@@ -24,7 +24,7 @@ public class CardData implements Parcelable {
     }
 
     public String getEditText() {
-        return editText;
+        return this.editText;
     }
 
     protected CardData(Parcel in) {
