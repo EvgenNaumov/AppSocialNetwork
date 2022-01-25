@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import com.example.appsocialnetwork.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class CardsSourceImpl implements CardsSource {
@@ -17,14 +18,18 @@ public class CardsSourceImpl implements CardsSource {
         this.resources = resources;
     }
 
-    public CardsSourceImpl init() {
+    public CardsSource Init(CardsSourceResponse cardsSourceResponse) {
         // строки заголовков из ресурсов
         String[] titles = resources.getStringArray(R.array.titles);
         String[] descriptions = resources.getStringArray(R.array.descriptions);
 
         int[] pictures = getImageArray();
         for (int i = 0; i < descriptions.length; i++) {
-            dataSource.add(new CardData(titles[i], descriptions[i], pictures[i], false, ""));
+            dataSource.add(new CardData(titles[i], descriptions[i], pictures[i], false, "", Calendar.getInstance().getTime()));
+        }
+
+        if (cardsSourceResponse!=null) {
+            cardsSourceResponse.initialized(this);
         }
         return this;
     }

@@ -3,20 +3,37 @@ package com.example.appsocialnetwork.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 public class CardData implements Parcelable {
+    private String id;
     private String title; // заголовок
     private String description; // описание
     private int picture; // изображение
     private boolean like; // флажок
     private String editText; //редактируемый текст
+    private Date date;
 
-    public CardData(String title, String description, int picture, boolean like, String editText) {
+    public CardData(String title, String description, int picture, boolean like, String editText,Date date) {
         this.title = title;
         this.description = description;
         this.picture = picture;
         this.like = like;
         this.editText = editText;
+        this.date = date;
 
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getEditText() {
+        return this.editText;
     }
 
     protected CardData(Parcel in) {
@@ -24,6 +41,8 @@ public class CardData implements Parcelable {
         description = in.readString();
         picture = in.readInt();
         like = in.readByte() != 0;
+        editText = in.readString();
+        date = new Date(in.readLong());
     }
 
     public static final Creator<CardData> CREATOR = new Creator<CardData>() {
@@ -65,5 +84,11 @@ public class CardData implements Parcelable {
         dest.writeString(description);
         dest.writeInt(picture);
         dest.writeByte((byte) (like ? 1 : 0));
+        dest.writeString(editText);
+        dest.writeLong(date.getTime());
+    }
+
+    public Date getDate() {
+        return date;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.appsocialnetwork.ui;
 
+import android.icu.text.UFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,22 +19,28 @@ import com.example.appsocialnetwork.R;
 import com.example.appsocialnetwork.data.CardData;
 import com.example.appsocialnetwork.data.CardsSource;
 
+import java.text.SimpleDateFormat;
+
 import javax.sql.DataSource;
 
 public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdapter.ViewHolder> {
     private final static String TAG = "SocialNetworkAdapter";
-    private final CardsSource dataSource;
+    private CardsSource dataSource;
     private OnItemClickListener itemClickListener;
     private  Fragment fragment;
     private  int menuPosition;
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public SocialNetworkAdapter(CardsSource dataSource, Fragment fragment) {
-        this.dataSource = dataSource;
+    public SocialNetworkAdapter(Fragment fragment) {
         //Фрагмент передаётся для вызова метода registerForContextMenu(). Повесим контекстное меню на
         //весь макет CardView.
         this.fragment = fragment;
+    }
+
+    public void setDataSource(CardsSource dataSource){
+        this.dataSource = dataSource;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -83,6 +90,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
         private TextView description;
         private AppCompatImageView image;
         private CheckBox like;
+        private TextView date;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -91,6 +99,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
             description = itemView.findViewById(R.id.description);
             image = itemView.findViewById(R.id.ImageView);
             like = itemView.findViewById(R.id.like);
+            date = itemView.findViewById(R.id.date);
 
             registerContextMenu(itemView);
             
@@ -133,6 +142,7 @@ public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdap
             description.setText(cardData.getDescription());
             like.setChecked(cardData.isLike());
             image.setImageResource(cardData.getPicture());
+            date.setText(new SimpleDateFormat("dd-MM-yy").format(cardData.getDate()));
         }
     }
 
