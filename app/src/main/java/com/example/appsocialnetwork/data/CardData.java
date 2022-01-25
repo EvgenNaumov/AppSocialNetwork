@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 
 public class CardData implements Parcelable {
+    private String id;
     private String title; // заголовок
     private String description; // описание
     private int picture; // изображение
@@ -21,6 +22,14 @@ public class CardData implements Parcelable {
         this.editText = editText;
         this.date = date;
 
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getEditText() {

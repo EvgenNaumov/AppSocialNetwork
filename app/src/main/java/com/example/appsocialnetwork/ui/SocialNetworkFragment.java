@@ -31,6 +31,7 @@ import com.example.appsocialnetwork.R;
 import com.example.appsocialnetwork.data.CardData;
 import com.example.appsocialnetwork.data.CardsSource;
 import com.example.appsocialnetwork.data.CardsSourceImpl;
+import com.example.appsocialnetwork.data.CardsSourceResponse;
 import com.example.appsocialnetwork.observe.Observer;
 import com.example.appsocialnetwork.observe.Publisher;
 
@@ -61,7 +62,6 @@ public class SocialNetworkFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        data = new CardsSourceImpl(getResources()).init();
     }
 
     @Nullable
@@ -75,7 +75,15 @@ public class SocialNetworkFragment extends Fragment {
 
     private void initView(View view) {
         recyclerView = view.findViewById(R.id.recycler_view_lines);
+
         initRecycleView();
+        data = new CardsSourceImpl(getResources()).Init(new CardsSourceResponse() {
+            @Override
+            public void initialized(CardsSource cardsData) {
+                adapter.notifyDataSetChanged();
+            }
+        });
+        adapter.setDataSource(data);
     }
 
     @Override
@@ -106,14 +114,37 @@ public class SocialNetworkFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
+//        switch (item.getItemId()) {
+//            case R.id.action_add:
 //                data.addCardData(new CardData("Заголовок " + data.size(),
 //                        "Описание ",
 //                        R.drawable.ic_launcher_newcard,
 //                        false, "Новая заметка"));
 //                adapter.notifyItemInserted(data.size() - 1);
 //                recyclerView.smoothScrollToPosition(data.size() - 1);
+//                navigation.addFragment(CardFragment.newInstance(), true);
+//                publisher.subscibe(new Observer() {
+//                    @Override
+//                    public void updateCardData(CardData cardData) {
+//                        data.addCardData(cardData);
+//                        adapter.notifyItemInserted(data.size() - 1);
+//                        // это сигнал, чтобы вызванный метод onCreateView
+//                        // перепрыгнул на конец списка
+//                        moveToLastPosition = true;
+//                    }
+//                });
+//                return true;
+//            case R.id.action_clear:
+//                data.clearCardData();
+//                adapter.notifyDataSetChanged();
+//                return true;
+//        }
+        return onItemSelected(item.getItemId()) || super.onOptionsItemSelected(item);
+    }
+
+    private boolean onItemSelected(int itemId) {
+        switch (itemId){
+            case R.id.action_add:
                 navigation.addFragment(CardFragment.newInstance(), true);
                 publisher.subscibe(new Observer() {
                     @Override
@@ -126,12 +157,29 @@ public class SocialNetworkFragment extends Fragment {
                     }
                 });
                 return true;
+            case R.id.action_update:
+                final int updatePosition = adapter.getMenuPosition();
+                navigation.addFragment(CardFragment.newInstance(data.getCardData(updatePosition)
+                ), true);
+                publisher.subscibe(new Observer() {
+                    @Override
+                    public void updateCardData(CardData cardData) {
+                        data.updateCardData(updatePosition, cardData);
+                        adapter.notifyItemChanged(updatePosition);
+                    }
+                });
+                return true;
+            case R.id.action_delete:
+                int deletePosition = adapter.getMenuPosition();
+                data.deleteCardData(deletePosition);
+                adapter.notifyItemRemoved(deletePosition);
+                return true;
             case R.id.action_clear:
                 data.clearCardData();
                 adapter.notifyDataSetChanged();
                 return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private void initRecycleView() {
@@ -141,7 +189,8 @@ public class SocialNetworkFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // Установим адаптер
-        adapter = new SocialNetworkAdapter(data, this);
+        adapter = new SocialNetworkAdapter(this);
+        adapter.setDataSource(data);
         recyclerView.setAdapter(adapter);
 
         // Добавим разделитель карточек
@@ -180,32 +229,32 @@ public class SocialNetworkFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        final int position = adapter.getMenuPosition();
-        switch (item.getItemId()) {
-            case R.id.action_update:
-                data.updateCardData(position, new CardData("Кадр " + position,
-                        data.getCardData(position).getDescription(),
-                        data.getCardData(position).getPicture(),
-                        false,
-                        data.getCardData(position).getEditText(),
-                        Calendar.getInstance().getTime()
-                ));
-                adapter.notifyItemChanged(position);
-
-                navigation.addFragment(CardFragment.newInstance(data.getCardData(position)),true);
-                publisher.subscibe(new Observer() {
-                    @Override
-                    public void updateCardData(CardData cardData) {
-                        data.updateCardData(position,cardData);
-                        adapter.notifyItemChanged(position);
-                    }
-                });
-                return true;
-            case R.id.action_delete:
-                data.deleteCardData(position);
-                adapter.notifyItemRemoved(position);
-                return true;
-        }
-        return super.onContextItemSelected(item);
+//        final int position = adapter.getMenuPosition();
+//        switch (item.getItemId()) {
+//            case R.id.action_update:
+//                data.updateCardData(position, new CardData("Кадр " + position,
+//                        data.getCardData(position).getDescription(),
+//                        data.getCardData(position).getPicture(),
+//                        data.getCardData(position).isLike(),
+//                        data.getCardData(position).getEditText(),
+//                        data.getCardData(position).getDate()
+//                ));
+//                adapter.notifyItemChanged(position);
+//
+//                navigation.addFragment(CardFragment.newInstance(data.getCardData(position)),true);
+//                publisher.subscibe(new Observer() {
+//                    @Override
+//                    public void updateCardData(CardData cardData) {
+//                        data.updateCardData(position,cardData);
+//                        adapter.notifyItemChanged(position);
+//                    }
+//                });
+//                return true;
+//            case R.id.action_delete:
+//                data.deleteCardData(position);
+//                adapter.notifyItemRemoved(position);
+//                return true;
+//        }
+        return super.onContextItemSelected(item) || onItemSelected(item.getItemId());
     }
 }

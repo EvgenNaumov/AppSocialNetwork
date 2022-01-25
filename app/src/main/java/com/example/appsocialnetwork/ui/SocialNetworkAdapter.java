@@ -25,18 +25,22 @@ import javax.sql.DataSource;
 
 public class SocialNetworkAdapter extends RecyclerView.Adapter<SocialNetworkAdapter.ViewHolder> {
     private final static String TAG = "SocialNetworkAdapter";
-    private final CardsSource dataSource;
+    private CardsSource dataSource;
     private OnItemClickListener itemClickListener;
     private  Fragment fragment;
     private  int menuPosition;
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public SocialNetworkAdapter(CardsSource dataSource, Fragment fragment) {
-        this.dataSource = dataSource;
+    public SocialNetworkAdapter(Fragment fragment) {
         //Фрагмент передаётся для вызова метода registerForContextMenu(). Повесим контекстное меню на
         //весь макет CardView.
         this.fragment = fragment;
+    }
+
+    public void setDataSource(CardsSource dataSource){
+        this.dataSource = dataSource;
+        notifyDataSetChanged();
     }
 
     @NonNull
